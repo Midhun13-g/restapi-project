@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import com.rest.springapp.entities.Coupon;
 import com.rest.springapp.repository.CouponRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class CouponService {
     private final CouponRepository couponRepository;
@@ -24,24 +26,18 @@ public class CouponService {
     }
 
     public Page<Coupon> searchCoupons(
-            String code,
-            String description,
-            Double discountPercentage,
-            LocalDate expirationDate,
-            Boolean redeemed,
-            int page,
-            int size,
-            String sortBy,
-            String sortDir) {
-        
+            String code, String description, Double discountPercentage,
+            LocalDate expirationDate, Boolean redeemed,
+            int page, int size, String sortBy, String sortDir) {
+
         Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-
         return couponRepository.searchCoupons(code, description, discountPercentage, expirationDate, redeemed, pageable);
     }
 
     public Coupon getCouponById(Long id) {
-        return couponRepository.findById(id).orElseThrow(() -> new RuntimeException("Coupon not found"));
+        return couponRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Coupon not found"));
     }
 
     public Page<Coupon> getAllCoupons(int page, int size, String sortBy, String sortDir) {
@@ -62,5 +58,15 @@ public class CouponService {
 
     public void deleteCoupon(Long id) {
         couponRepository.deleteById(id);
+    }
+
+    @Transactional
+    public int updateCouponByIdAndCode(Long id, String code, Coupon couponDetails) {
+        return couponRepository.updateByIdAndCode(id, code, couponDetails.getDescription(),
+                couponDetails.getDiscountPercentage(), couponDetails.getExpirationDate(), couponDetails.isRedeemed());
+    }
+
+    public void deleteCouponByCode(String code) {
+        couponRepository.deleteByCode(code);
     }
 }

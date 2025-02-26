@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rest.springapp.Service.AdminService;
 import com.rest.springapp.entities.Admin;
 
+
 @RestController
 @RequestMapping("/api/admins")
 public class AdminController {
@@ -35,7 +36,7 @@ public class AdminController {
     @GetMapping
     public ResponseEntity<Page<Admin>> getAllAdmins(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "100") int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection) {
         return ResponseEntity.ok(adminService.getAllAdmins(page, size, sortBy, sortDirection));
@@ -68,16 +69,35 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getAdminsByName(name));
     }
 
-    // Update an admin
+    // Update an admin (only update non-null fields)
     @PutMapping("/{id}")
-    public ResponseEntity<Admin> updateAdmin(@PathVariable Long id, @RequestBody Admin admin) {
-        return ResponseEntity.ok(adminService.updateAdmin(id, admin));
+    public ResponseEntity<String> updateAdmin(@PathVariable Long id, @RequestBody Admin admin) {
+        int updatedRows = adminService.updateAdmin(id, admin);
+        if (updatedRows > 0) {
+            return ResponseEntity.ok("Admin updated successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("No update made or admin not found.");
+        }
     }
 
-    // Delete an admin
+    // Delete an admin by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteAdmin(@PathVariable Long id) {
         adminService.deleteAdmin(id);
         return ResponseEntity.ok("Admin deleted successfully.");
+    }
+
+    // Delete an admin by email
+    @DeleteMapping("/email/{email}")
+    public ResponseEntity<String> deleteAdminByEmail(@PathVariable String email) {
+        adminService.deleteAdminByEmail(email);
+        return ResponseEntity.ok("Admin deleted successfully.");
+    }
+
+    // Delete multiple admins by role
+    @DeleteMapping("/role/{role}")
+    public ResponseEntity<String> deleteAdminsByRole(@PathVariable String role) {
+        adminService.deleteAdminsByRole(role);
+        return ResponseEntity.ok("Admins with role '" + role + "' deleted successfully.");
     }
 }

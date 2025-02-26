@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.rest.springapp.entities.Cashback;
 import com.rest.springapp.repository.CashbackRepository;
@@ -45,7 +46,27 @@ public class CashbackService {
         return cashbackRepository.save(cashback);
     }
 
+    @Transactional
+    public void updateCashbackAmount(Long id, Double amount) {
+        cashbackRepository.updateCashbackAmountById(id, amount);
+    }
+
+    @Transactional
+    public void updateCashbackDescription(Long id, String description) {
+        cashbackRepository.updateCashbackDescriptionById(id, description);
+    }
+
     public void deleteCashback(Long id) {
         cashbackRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteCashbackByAmount(Double amount) {
+        cashbackRepository.deleteCashbackByAmount(amount);
+    }
+
+    @Transactional
+    public void deleteCashbackByDescription(String description) {
+        cashbackRepository.deleteCashbackByDescription(description);
     }
 }

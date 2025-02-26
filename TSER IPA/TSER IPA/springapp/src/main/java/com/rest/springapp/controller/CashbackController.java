@@ -26,8 +26,7 @@ public class CashbackController {
 
     @PostMapping
     public ResponseEntity<Cashback> createCashback(@RequestBody Cashback cashback) {
-        Cashback createdCashback = cashbackService.createCashback(cashback);
-        return ResponseEntity.ok(createdCashback);
+        return ResponseEntity.ok(cashbackService.createCashback(cashback));
     }
 
     @GetMapping("/{id}")
@@ -48,7 +47,7 @@ public class CashbackController {
     public ResponseEntity<Page<Cashback>> getCashbacksByDescription(
             @RequestParam String description,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "100") int size,
             @RequestParam(defaultValue = "description") String sortBy,
             @RequestParam(defaultValue = "asc") String direction) {
         return ResponseEntity.ok(cashbackService.getCashbacksByDescription(description, page, size, sortBy, direction));
@@ -59,9 +58,33 @@ public class CashbackController {
         return ResponseEntity.ok(cashbackService.updateCashback(id, cashback));
     }
 
+    @PutMapping("/{id}/amount")
+    public ResponseEntity<Void> updateCashbackAmount(@PathVariable Long id, @RequestParam Double amount) {
+        cashbackService.updateCashbackAmount(id, amount);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/description")
+    public ResponseEntity<Void> updateCashbackDescription(@PathVariable Long id, @RequestParam String description) {
+        cashbackService.updateCashbackDescription(id, description);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCashback(@PathVariable Long id) {
         cashbackService.deleteCashback(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/delete-by-amount")
+    public ResponseEntity<Void> deleteCashbackByAmount(@RequestParam Double amount) {
+        cashbackService.deleteCashbackByAmount(amount);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/delete-by-description")
+    public ResponseEntity<Void> deleteCashbackByDescription(@RequestParam String description) {
+        cashbackService.deleteCashbackByDescription(description);
         return ResponseEntity.noContent().build();
     }
 }

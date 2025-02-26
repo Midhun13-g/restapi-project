@@ -7,9 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.rest.springapp.entities.Admin;
 import com.rest.springapp.repository.AdminRepository;
+
 
 @Service
 public class AdminService {
@@ -53,18 +55,33 @@ public class AdminService {
         return adminRepository.findByNameContaining(name);
     }
 
-    // Update an admin
-    public Admin updateAdmin(Long id, Admin updatedAdmin) {
-        Admin existingAdmin = getAdminById(id);
-        existingAdmin.setName(updatedAdmin.getName());
-        existingAdmin.setEmail(updatedAdmin.getEmail());
-        existingAdmin.setPhoneNumber(updatedAdmin.getPhoneNumber());
-        existingAdmin.setRole(updatedAdmin.getRole());
-        return adminRepository.save(existingAdmin);
+    // Update an admin (only update non-null fields)
+    @Transactional
+    public int updateAdmin(Long id, Admin updatedAdmin) {
+        return adminRepository.updateAdmin(
+            id,
+            updatedAdmin.getName(),
+            updatedAdmin.getEmail(),
+            updatedAdmin.getPhoneNumber(),
+            updatedAdmin.getRole()
+        );
     }
 
-    // Delete an admin
+    // Delete an admin by ID
+    @Transactional
     public void deleteAdmin(Long id) {
-        adminRepository.deleteById(id);
+        adminRepository.deleteAdminById(id);
+    }
+
+    // Delete an admin by email
+    @Transactional
+    public void deleteAdminByEmail(String email) {
+        adminRepository.deleteAdminByEmail(email);
+    }
+
+    // Delete multiple admins by role
+    @Transactional
+    public void deleteAdminsByRole(String role) {
+        adminRepository.deleteAdminsByRole(role);
     }
 }
