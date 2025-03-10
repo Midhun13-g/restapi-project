@@ -1,5 +1,7 @@
 package com.rest.springapp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,9 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "retailers")
-public class Retailer {
-    
+@Table(name = "users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,20 +18,9 @@ public class Retailer {
     private String name;
     private String email;
     private String phoneNumber;
-    private String address;
-    private String category;
 
-    // Default Constructor
-    public Retailer() {}
-
-    // Parameterized Constructor
-    public Retailer(String name, String email, String phoneNumber, String address, String category) {
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.category = category;
-    }
+    @JsonIgnore  // This will exclude the password from responses
+    private String password;
 
     // Getters and Setters
     public Long getId() {
@@ -65,19 +55,11 @@ public class Retailer {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getAddress() {
-        return address;
+    public String getPassword() {
+        return password;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
